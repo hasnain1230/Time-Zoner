@@ -376,7 +376,7 @@ async def timezone_unset_all(ctx):
 
 @bot.command(name="help")
 async def help(ctx):
-    embed = discord.Embed(title="Help Is Here!", description="You can view all TimeZoner commands [here](link)", color=color)
+    embed = discord.Embed(title="Help Is Here!", description="You can view all TimeZoner commands [here](https://github.com/hasnain1230/Time-Zoner/blob/main/HELP.md)", color=color)
     await ctx.author.send(embed=embed)
 
 @bot.command(name="source")
