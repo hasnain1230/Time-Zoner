@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# API Keys
+secrets/
+
+# Logs
+src/guild_timezones.csv
+
+# IDE Files
+.idea/
+
