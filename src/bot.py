@@ -15,7 +15,7 @@ import zoneinfo
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(intents=intents, command_prefix='!')
+bot = commands.Bot(intents=intents, command_prefix='!', help_command=None)
 
 color = int("0000FF", 16)
 
