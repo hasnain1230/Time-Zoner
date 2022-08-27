@@ -319,7 +319,9 @@ async def timezone_unset(ctx, *time_zones: str):
                     try:
                         active_timezones.remove(zone)
                     except KeyError:
-                        embed = discord.Embed(title="Time Zone Unset Error", description="This time zone has not been set for this server", color=color)
+                        embed = discord.Embed(title="Time Zone Unset Error",
+                                              description="This time zone has not been set for this server",
+                                              color=color)
                         await ctx.channel.send(embed=embed)
                         return
 
@@ -336,6 +338,7 @@ async def timezone_unset(ctx, *time_zones: str):
 
     csvfile.close()
 
+
 @bot.command(name="timezone_unset_all", aliases=["tz_unset_all"])
 @has_permissions(administrator=True)
 async def timezone_unset_all(ctx):
@@ -351,7 +354,8 @@ async def timezone_unset_all(ctx):
             lines.append(row)
 
         if not guild_found:
-            embed = discord.Embed(title="Server Not Found Error", description="Your server does not have time zones set.", color=color)
+            embed = discord.Embed(title="Server Not Found Error",
+                                  description="Your server does not have time zones set.", color=color)
             await ctx.channel.send(embed=embed)
             csvfile.close()
             return
@@ -362,11 +366,23 @@ async def timezone_unset_all(ctx):
         writer = csv.writer(csvfile)
         writer.writerows(lines)
 
-    embed = discord.Embed(title="All Time Zones Unset", description="All time zones for your server have been unset", color=color)
+    embed = discord.Embed(title="All Time Zones Unset", description="All time zones for your server have been unset",
+                          color=color)
 
     csvfile.close()
 
     await ctx.channel.send(embed=embed)
+
+
+@bot.command(name="help")
+async def help(ctx):
+    embed = discord.Embed(title="Help Is Here!", description="You can view all TimeZoner commands [here](link)", color=color)
+    await ctx.author.send(embed=embed)
+
+@bot.command(name="source")
+async def source(ctx):
+    embed = discord.Embed(title="But How It Work?", description="You can view TimeZoner's source code [here](https://github.com/hasnain1230/Time-Zoner)", color=color)
+    await ctx.author.send(embed=embed)
 
 
 if __name__ == '__main__':
