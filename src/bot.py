@@ -115,19 +115,21 @@ Tl;dr: By having accurate times per time zone, we can eliminate weird edge cases
 def convert_time(_time, zone, convert_zone, format_str):
     zone_time = datetime.datetime.now(tz=zoneinfo.ZoneInfo(zone)).replace(hour=_time.hour, minute=_time.minute)
 
+    print(format_str)
+
     if zone_time > datetime.datetime.now(tz=zoneinfo.ZoneInfo(zone)):
         zone_time = zone_time.astimezone(zoneinfo.ZoneInfo(convert_zone))
-        return zone_time.strftime("%-H:%M")
+        return zone_time.strftime(format_str)
     else:
         zone_time = zone_time.replace(day=_time.day + 1).astimezone(zoneinfo.ZoneInfo(convert_zone))
-        return zone_time.strftime("%-H:%M")
+        return zone_time.strftime(format_str)
 
 
 def return_conversions_embed(time_str, time_format, guild_timezones):
     _time = datetime.datetime.strptime(time_str, time_format)
     description = ""
 
-    if time_format == "%H:%M" and _time.hour > 12:
+    if time_format == "%-H:%M" and _time.hour > 12:
         for zone in guild_timezones:
             for convert_zone in guild_timezones:
                 if zone == convert_zone:
@@ -136,15 +138,16 @@ def return_conversions_embed(time_str, time_format, guild_timezones):
                     description += f":arrow_right: **{_time.strftime(time_format)}** in **{zone}** to **{convert_zone}** is: **{convert_time(_time, zone, convert_zone, time_format)}**\n"
 
     elif time_format == "%I:%M" or time_format == "%H:%M":
+        time_format = "%-I:%M" if time_format == "%I:%M" else "%-H:%M"
         for zone in guild_timezones:
             for convert_zone in guild_timezones:
                 if zone == convert_zone:
                     continue
                 else:
                     _time = datetime.datetime.strptime(f"{time_str}am", "%I:%M%p")
-                    description += f":arrow_right: **{_time.strftime('%-I:%M')} A.M.** in **{zone}** to **{convert_zone}** is: **{convert_time(_time, zone, convert_zone, time_format)} A.M.**\n"
+                    description += f":arrow_right: **{_time.strftime('%-I:%M')} A.M.** in **{zone}** to **{convert_zone}** is: **{convert_time(_time, zone, convert_zone, time_format)}.**\n"
                     _time = datetime.datetime.strptime(f"{time_str}pm", "%I:%M%p")
-                    description += f":arrow_right: **{_time.strftime('%-I:%M')} P.M.** in **{zone}** to **{convert_zone}** is: **{convert_time(_time, zone, convert_zone, time_format)} P.M.**\n"
+                    description += f":arrow_right: **{_time.strftime('%-I:%M')} P.M.** in **{zone}** to **{convert_zone}** is: **{convert_time(_time, zone, convert_zone, time_format)}.**\n"
 
     elif time_format == "%I:%M%p" or time_format == "%I%p":
         time_format = "%-I:%M %p" if time_format == "%I:%M%p" else "%-I %p"
@@ -154,7 +157,7 @@ def return_conversions_embed(time_str, time_format, guild_timezones):
                 if zone == convert_zone:
                     continue
                 else:
-                    description += f":arrow_right: **{_time.strftime(time_format)} ** in **{zone}** to **{convert_zone}** is: **{convert_time(_time, zone, convert_zone, time_format)} A.M.**\n"
+                    description += f":arrow_right: **{_time.strftime(time_format)} ** in **{zone}** to **{convert_zone}** is: **{convert_time(_time, zone, convert_zone, time_format)}.**\n"
     else:
         return None
 
@@ -185,7 +188,8 @@ async def on_message(message):
     guild_timezones = check_guild_configuration(message.guild.id)
 
     if not guild_timezones[0]:  # If no time zone is set, then don't do anything. We do not want to spam the server.
-        pass
+        await bot.process_commands(message)
+        return
     else:
         guild_timezones = guild_timezones[1]
 
